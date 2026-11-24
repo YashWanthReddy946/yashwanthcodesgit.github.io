@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>Class Attendance | EduPortal</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202b40;
+      --muted: #788398;
+      --line: #e8ebf1;
+      --paper: #ffffff;
+      --canvas: #f5f7fb;
+      --blue: #536fbd;
+      --blue-dark: #23375f;
+      --blue-pale: #edf1fc;
+      --green: #23876c;
+      --green-pale: #e8f5f0;
+      --red: #c76164;
+      --red-pale: #fbefef;
+      --shadow: 0 8px 26px rgba(34, 50, 82, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background: var(--canvas);
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .topbar {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 max(28px, calc((100% - 1160px) / 2));
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: var(--blue-dark);
+      font-size: 17px;
+      font-weight: 750;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      color: #fff;
+      background: var(--blue);
+    }
+
+    .brand-icon svg {
+      width: 21px;
+      height: 21px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #566177;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .profile-avatar {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--blue-dark);
+      background: #e7ecfa;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    main {
+      width: min(1160px, calc(100% - 56px));
+      margin: 42px auto 64px;
+    }
+
+    .page-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 27px;
+    }
+
+    .eyebrow {
+      margin: 0 0 7px;
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 4vw, 38px);
+      font-weight: 600;
+      letter-spacing: -0.8px;
+    }
+
+    .page-description {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .date-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 43px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--paper);
+      color: #657187;
+    }
+
+    .date-control svg {
+      width: 17px;
+      height: 17px;
+      flex: 0 0 auto;
+      color: var(--blue);
+    }
+
+    .date-control input {
+      width: 145px;
+      border: 0;
+      outline: 0;
+      color: var(--ink);
+      background: transparent;
+      font-weight: 600;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      min-height: 112px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .summary-icon {
+      width: 43px;
+      height: 43px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--blue);
+      background: var(--blue-pale);
+    }
+
+    .summary-icon.green {
+      color: var(--green);
+      background: var(--green-pale);
+    }
+
+    .summary-icon.red {
+      color: var(--red);
+      background: var(--red-pale);
+    }
+
+    .summary-icon.slate {
+      color: #68758a;
+      background: #f0f2f6;
+    }
+
+    .summary-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .summary-label {
+      margin: 0 0 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .summary-value {
+      margin: 0;
+      color: var(--ink);
+      font-size: 25px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .summary-value small {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .attendance-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .card-heading {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 17px 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .card-heading h2 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .card-heading p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .button {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 650;
+      transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+    }
+
+    .button:active {
+      transform: translateY(1px);
+    }
+
+    .button-primary {
+      color: #fff;
+      background: var(--blue-dark);
+    }
+
+    .button-primary:hover {
+      background: #304a7d;
+    }
+
+    .button-light {
+      color: #53627d;
+      border-color: var(--line);
+      background: #fff;
+    }
+
+    .button-light:hover {
+      border-color: #cdd5e4;
+      background: #f9faff;
+    }
+
+    .button svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 15px 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .toolbar-left,
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search {
+      position: relative;
+    }
+
+    .search svg {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      width: 16px;
+      height: 16px;
+      color: #9099a9;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .search input,
+    .filter-select {
+      height: 39px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      outline: 0;
+      color: var(--ink);
+      background: #fff;
+      font-size: 13px;
+    }
+
+    .search input {
+      width: 230px;
+      padding: 0 12px 0 36px;
+    }
+
+    .search input:focus,
+    .filter-select:focus {
+      border-color: #9aabd7;
+      box-shadow: 0 0 0 3px rgba(83, 111, 189, 0.1);
+    }
+
+    .search input::placeholder {
+      color: #a0a8b6;
+    }
+
+    .filter-select {
+      min-width: 135px;
+      padding: 0 30px 0 11px;
+    }
+
+    .mark-all {
+      padding: 0 11px;
+      color: var(--blue);
+      border: 1px solid #dfe5f5;
+      border-radius: 7px;
+      background: #f7f8fd;
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .mark-all:hover {
+      background: var(--blue-pale);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    thead {
+      background: #fafbfe;
+    }
+
+    th {
+      height: 44px;
+      padding: 0 22px;
+      color: #7d8799;
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    td {
+      height: 72px;
+      padding: 10px 22px;
+      border-top: 1px solid #f0f1f5;
+      vertical-align: middle;
+    }
+
+    tbody tr:hover {
+      background: #fcfcfe;
+    }
+
+    .student-cell {
+      min-width: 220px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .student-avatar {
+      width: 36px;
+      height: 36px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #4a6198;
+      background: #edf1fa;
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .student-name {
+      color: #303b50;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .registration-cell {
+      min-width: 235px;
+      white-space: nowrap;
+    }
+
+    .registration-number {
+      color: #526078;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .percentage {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 12px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .percentage.no-data {
+      color: #9aa2b0;
+      font-weight: 500;
+    }
+
+    .percentage-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status-picker {
+      display: inline-flex;
+      gap: 5px;
+      padding: 3px;
+      border: 1px solid #eceef3;
+      border-radius: 8px;
+      background: #f8f9fb;
+    }
+
+    .status-option {
+      min-width: 75px;
+      min-height: 30px;
+      padding: 0 9px;
+      border: 0;
+      border-radius: 6px;
+      color: #8a93a3;
+      background: transparent;
+      font-size: 11px;
+      font-weight: 650;
+    }
+
+    .status-option[aria-pressed="true"][data-status="present"] {
+      color: #19775c;
+      background: #e0f2eb;
+    }
+
+    .status-option[aria-pressed="true"][data-status="absent"] {
+      color: #b35359;
+      background: #f8e6e7;
+    }
+
+    .remove-button {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 7px;
+      color: #9aa2b0;
+      background: transparent;
+    }
+
+    .remove-button:hover {
+      color: var(--red);
+      background: var(--red-pale);
+    }
+
+    .remove-button svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .empty-state {
+      padding: 44px 20px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .empty-state strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #4f5c73;
+      font-size: 14px;
+    }
+
+    .card-footer {
+      min-height: 67px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 13px 22px;
+      border-top: 1px solid var(--line);
+      background: #fdfdfe;
+    }
+
+    .footer-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-note strong {
+      color: #56637a;
+      font-weight: 650;
+    }
+
+    .message {
+      min-height: 20px;
+      margin: 13px 22px 0;
+      color: #536ca8;
+      font-size: 12px;
+    }
+
+    .message.error {
+      color: #b35359;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      z-index: 10;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(25, 36, 57, 0.42);
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      width: min(420px, 100%);
+      padding: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 14px;
+      background: var(--paper);
+      box-shadow: 0 20px 60px rgba(22, 33, 54, 0.25);
+    }
+
+    .modal h2 {
+      margin: 0 0 7px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 25px;
+    }
+
+    .modal-copy {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .modal-field {
+      display: block;
+      margin-bottom: 16px;
+      color: #536078;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .modal-field input {
+      width: 100%;
+      height: 43px;
+      display: block;
+      margin-top: 7px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      outline: 0;
+      color: var(--ink);
+    }
+
+    .modal-field input:focus {
+      border-color: #9aabd7;
+      box-shadow: 0 0 0 3px rgba(83, 111, 189, 0.1);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      margin-top: 22px;
+    }
+
+    @media (max-width: 900px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .toolbar-left,
+      .toolbar-right {
+        width: 100%;
+      }
+
+      .search {
+        flex: 1;
+      }
+
+      .search input {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .topbar {
+        height: 64px;
+        padding: 0 18px;
+      }
+
+      main {
+        width: calc(100% - 32px);
+        margin: 28px auto 40px;
+      }
+
+      .page-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 17px;
+        margin-bottom: 20px;
+      }
+
+      .date-control {
+        width: 100%;
+      }
+
+      .date-control input {
+        flex: 1;
+      }
+
+      .summary-grid {
+        gap: 10px;
+        margin-bottom: 17px;
+      }
+
+      .summary-card {
+        min-height: 94px;
+        gap: 10px;
+        padding: 13px;
+      }
+
+      .summary-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+      }
+
+      .summary-icon svg {
+        width: 17px;
+        height: 17px;
+      }
+
+      .summary-label {
+        font-size: 11px;
+      }
+
+      .summary-value {
+        font-size: 21px;
+      }
+
+      .card-heading {
+        align-items: flex-start;
+        padding: 16px;
+      }
+
+      .card-heading .button {
+        min-height: 36px;
+        padding: 0 10px;
+        font-size: 12px;
+      }
+
+      .toolbar {
+        padding: 13px 16px;
+      }
+
+      .toolbar-right {
+        flex-wrap: wrap;
+      }
+
+      .filter-select {
+        flex: 1;
+      }
+
+      th,
+      td {
+        padding-right: 14px;
+        padding-left: 14px;
+      }
+
+      .card-footer {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 15px 16px;
+      }
+
+      .card-footer .button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .profile > span:last-child {
+        display: none;
+      }
+
+      .summary-card {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .summary-icon {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M7.5 3.8v3.4m9-3.4v3.4M4.5 9h15M6 5.5h12a1.5 1.5 0 0 1 1.5 1.5v11A1.5 1.5 0 0 1 18 19.5H6A1.5 1.5 0 0 1 4.5 18V7A1.5 1.5 0 0 1 6 5.5Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          <path d="m8.5 14 2.2 2.2 4.8-4.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      EduPortal
+    </div>
+    <div class="profile">
+      <span class="profile-avatar" aria-hidden="true">TA</span>
+      <span>Teacher</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-heading" aria-labelledby="pageTitle">
+      <div>
+        <p class="eyebrow">Classroom management</p>
+        <h1 id="pageTitle">Class attendance</h1>
+        <p class="page-description">Record today's attendance and keep track of each student's progress.</p>
+      </div>
+      <label class="date-control" for="attendanceDate">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M7.5 3.8v3.4m9-3.4v3.4M4.5 9h15M6 5.5h12A1.5 1.5 0 0 1 19.5 7v11A1.5 1.5 0 0 1 18 19.5H6A1.5 1.5 0 0 1 4.5 18V7A1.5 1.5 0 0 1 6 5.5Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        <input id="attendanceDate" type="date" aria-label="Attendance date">
+      </label>
+    </section>
+
+    <section class="summary-grid" aria-label="Attendance summary">
+      <article class="summary-card">
+        <span class="summary-icon slate" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M16 20v-1.6a3.4 3.4 0 0 0-3.4-3.4H6.4A3.4 3.4 0 0 0 3 18.4V20m6.5-9a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm7-6.7a3.5 3.5 0 0 1 0 6.8m1 4.1h.1a3.4 3.4 0 0 1 3.4 3.4V20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </span>
+        <div><p class="summary-label">Total students</p><p class="summary-value" id="totalStudents">0</p></div>
+      </article>
+      <article class="summary-card">
+        <span class="summary-icon green" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="m5 12.5 4.2 4.2L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div><p class="summary-label">Present today</p><p class="summary-value" id="presentCount">0</p></div>
+      </article>
+      <article class="summary-card">
+        <span class="summary-icon red" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="m7 7 10 10M17 7 7 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </span>
+        <div><p class="summary-label">Absent today</p><p class="summary-value" id="absentCount">0</p></div>
+      </article>
+      <article class="summary-card">
+        <span class="summary-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4.5 18.5V12m5 6.5V6m5 12.5v-9m5 9V3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>
+        <div><p class="summary-label">Class attendance</p><p class="summary-value" id="classAverage">—<small>%</small></p></div>
+      </article>
+    </section>
+
+    <section class="attendance-card" aria-labelledby="rosterTitle">
+      <div class="card-heading">
+        <div>
+          <h2 id="rosterTitle">Student roster</h2>
+          <p>Mark each student present or absent for the selected date.</p>
+        </div>
+        <button class="button button-light" id="addStudentButton" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Add student
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <label class="search">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <input id="searchInput" type="search" placeholder="Search students..." aria-label="Search by name or registration number">
+          </label>
+          <select class="filter-select" id="statusFilter" aria-label="Filter by attendance status">
+            <option value="all">All students</option>
+            <option value="unmarked">Not marked</option>
+            <option value="present">Present</option>
+            <option value="absent">Absent</option>
+          </select>
+        </div>
+        <div class="toolbar-right">
+          <button class="button mark-all" type="button" data-mark-all="present">Mark all present</button>
+          <button class="button mark-all" type="button" data-mark-all="absent">Mark all absent</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Student</th>
+              <th scope="col">Registration no. / attendance</th>
+              <th scope="col">Today's status</th>
+              <th scope="col"><span class="visually-hidden">Remove</span></th>
+            </tr>
+          </thead>
+          <tbody id="studentRows"></tbody>
+        </table>
+      </div>
+
+      <div class="card-footer">
+        <p class="footer-note" id="sessionNote">Attendance percentage is based on saved sessions.</p>
+        <button class="button button-primary" id="saveAttendance" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4.5h12l2.5 2.5v12.5H4.5V4.5H5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 4.5v5h8v-5M8 19.5v-7h8v7" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          Save attendance
+        </button>
+      </div>
+    </section>
+    <p class="message" id="message" role="status" aria-live="polite"></p>
+  </main>
+
+  <div class="modal-backdrop" id="studentModal" aria-hidden="true">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h2 id="modalTitle">Add a student</h2>
+      <p class="modal-copy">Enter the student's name and registration number to add them to this class roster.</p>
+      <form id="studentForm">
+        <label class="modal-field" for="newStudentName">
+          Student name
+          <input id="newStudentName" name="name" type="text" maxlength="80" placeholder="e.g. Jamie Lee" required>
+        </label>
+        <label class="modal-field" for="newStudentReg">
+          Registration number
+          <input id="newStudentReg" name="registration" type="text" maxlength="40" placeholder="e.g. STU-2026-006" required>
+        </label>
+        <p class="message" id="formMessage" role="alert"></p>
+        <div class="modal-actions">
+          <button class="button button-light" id="cancelAddStudent" type="button">Cancel</button>
+          <button class="button button-primary" type="submit">Add student</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "eduportal-attendance-v1";
+    const starterStudents = [
+      { id: "stu-001", name: "Aanya Sharma", registration: "STU-2026-001" },
+      { id: "stu-002", name: "Arjun Patel", registration: "STU-2026-002" },
+      { id: "stu-003", name: "Mia Johnson", registration: "STU-2026-003" },
+      { id: "stu-004", name: "Noah Williams", registration: "STU-2026-004" },
+      { id: "stu-005", name: "Sofia Garcia", registration: "STU-2026-005" }
+    ];
+
+    const today = new Date();
+    const localDate = [
+      today.getFullYear(),
+      String(today.getMonth() + 1).padStart(2, "0"),
+      String(today.getDate()).padStart(2, "0")
+    ].join("-");
+
+    let storageWarning = false;
+    let state;
+    try {
+      const savedState = localStorage.getItem(STORAGE_KEY);
+      state = savedState ? JSON.parse(savedState) : null;
+      if (!state || !Array.isArray(state.students) || !state.records || !state.drafts) {
+        state = { students: starterStudents, records: {}, drafts: {} };
+      }
+    } catch (error) {
+      storageWarning = true;
+      state = { students: starterStudents, records: {}, drafts: {} };
+    }
+
+    const dateInput = document.getElementById("attendanceDate");
+    const rows = document.getElementById("studentRows");
+    const searchInput = document.getElementById("searchInput");
+    const statusFilter = document.getElementById("statusFilter");
+    const message = document.getElementById("message");
+    const modal = document.getElementById("studentModal");
+    const studentForm = document.getElementById("studentForm");
+    const formMessage = document.getElementById("formMessage");
+    dateInput.value = localDate;
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        storageWarning = false;
+        return true;
+      } catch (error) {
+        showMessage("Unable to save changes in this browser. Check storage availability and try again.", true);
+        return false;
+      }
+    }
+
+    function showMessage(text, isError) {
+      message.textContent = text;
+      message.classList.toggle("error", Boolean(isError));
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[character]);
+    }
+
+    function currentStatuses() {
+      return state.drafts[dateInput.value] || state.records[dateInput.value] || {};
+    }
+
+    function setStatus(studentId, value) {
+      const statuses = { ...currentStatuses(), [studentId]: value };
+      state.drafts[dateInput.value] = statuses;
+      saveState();
+      render();
+    }
+
+    function getStudentAttendance(studentId) {
+      let total = 0;
+      let present = 0;
+      Object.values(state.records).forEach((session) => {
+        const status = session[studentId];
+        if (status === "present" || status === "absent") {
+          total += 1;
+          if (status === "present") present += 1;
+        }
+      });
+      return total ? Math.round((present / total) * 100) : null;
+    }
+
+    function studentInitials(name) {
+      return name.trim().split(/\s+/).slice(0, 2).map((part) => part.charAt(0)).join("").toUpperCase();
+    }
+
+    function render() {
+      const statuses = currentStatuses();
+      const present = Object.values(statuses).filter((value) => value === "present").length;
+      const absent = Object.values(statuses).filter((value) => value === "absent").length;
+      const attendanceRates = state.students.map((student) => getStudentAttendance(student.id)).filter((rate) => rate !== null);
+      const classAverage = attendanceRates.length
+        ? Math.round(attendanceRates.reduce((sum, rate) => sum + rate, 0) / attendanceRates.length)
+        : null;
+
+      document.getElementById("totalStudents").textContent = state.students.length;
+      document.getElementById("presentCount").textContent = present;
+      document.getElementById("absentCount").textContent = absent;
+      document.getElementById("classAverage").innerHTML = classAverage === null ? "—<small>%</small>" : `${classAverage}<small>%</small>`;
+
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      const filter = statusFilter.value;
+      const filteredStudents = state.students.filter((student) => {
+        const studentStatus = statuses[student.id] || "unmarked";
+        const matchesSearch = `${student.name} ${student.registration}`.toLowerCase().includes(searchTerm);
+        return matchesSearch && (filter === "all" || filter === studentStatus);
+      });
+
+      if (!filteredStudents.length) {
+        const title = state.students.length ? "No students match your search" : "Your roster is empty";
+        const detail = state.students.length ? "Try a different name, registration number or status." : "Add students to start taking attendance.";
+        rows.innerHTML = `<tr><td class="empty-state" colspan="4"><strong>${title}</strong>${detail}</td></tr>`;
+      } else {
+        rows.innerHTML = filteredStudents.map((student) => {
+          const studentStatus = statuses[student.id] || "";
+          const percentage = getStudentAttendance(student.id);
+          const percentLabel = percentage === null ? "No sessions" : `${percentage}%`;
+          const percentClass = percentage === null ? "percentage no-data" : "percentage";
+          return `
+            <tr>
+              <td>
+                <div class="student-cell">
+                  <span class="student-avatar" aria-hidden="true">${escapeHTML(studentInitials(student.name))}</span>
+                  <span class="student-name">${escapeHTML(student.name)}</span>
+                </div>
+              </td>
+              <td class="registration-cell">
+                <span class="registration-number">${escapeHTML(student.registration)}</span>
+                <span class="${percentClass}" aria-label="Attendance ${escapeHTML(percentLabel)}"><span class="percentage-dot" aria-hidden="true"></span>${escapeHTML(percentLabel)}</span>
+              </td>
+              <td>
+                <div class="status-picker" role="group" aria-label="Mark ${escapeHTML(student.name)}'s attendance">
+                  <button class="status-option" type="button" data-student-id="${escapeHTML(student.id)}" data-status="present" aria-pressed="${studentStatus === "present"}">Present</button>
+                  <button class="status-option" type="button" data-student-id="${escapeHTML(student.id)}" data-status="absent" aria-pressed="${studentStatus === "absent"}">Absent</button>
+                </div>
+              </td>
+              <td>
+                <button class="remove-button" type="button" data-remove-id="${escapeHTML(student.id)}" aria-label="Remove ${escapeHTML(student.name)}">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 7h15m-10.5 0V4.5h6V7m2.5 0-.8 13h-9.4L6.5 7m3 3v6m5-6v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </td>
+            </tr>`;
+        }).join("");
+      }
+
+      const savedSession = Object.prototype.hasOwnProperty.call(state.records, dateInput.value);
+      const sessionCount = Object.keys(state.records).length;
+      document.getElementById("sessionNote").innerHTML = savedSession
+        ? `Attendance for this date is <strong>saved</strong>. Percentages use ${sessionCount} saved ${sessionCount === 1 ? "session" : "sessions"}.`
+        : `This date is not saved yet. Percentages use ${sessionCount} saved ${sessionCount === 1 ? "session" : "sessions"}.`;
+    }
+
+    rows.addEventListener("click", (event) => {
+      const statusButton = event.target.closest("[data-student-id]");
+      if (statusButton) {
+        setStatus(statusButton.dataset.studentId, statusButton.dataset.status);
+        showMessage("", false);
+        return;
+      }
+
+      const removeButton = event.target.closest("[data-remove-id]");
+      if (removeButton) {
+        const student = state.students.find((item) => item.id === removeButton.dataset.removeId);
+        if (!student || !window.confirm(`Remove ${student.name} from this roster? Their saved attendance records are retained.`)) return;
+        state.students = state.students.filter((item) => item.id !== student.id);
+        saveState();
+        render();
+        showMessage(`${student.name} was removed from the roster.`, false);
+      }
+    });
+
+    document.querySelectorAll("[data-mark-all]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const statuses = { ...currentStatuses() };
+        state.students.forEach((student) => {
+          statuses[student.id] = button.dataset.markAll;
+        });
+        state.drafts[dateInput.value] = statuses;
+        saveState();
+        render();
+        showMessage(`All ${state.students.length} students marked ${button.dataset.markAll}.`, false);
+      });
+    });
+
+    document.getElementById("saveAttendance").addEventListener("click", () => {
+      const statuses = currentStatuses();
+      const unmarked = state.students.filter((student) => !statuses[student.id]);
+      if (unmarked.length) {
+        showMessage(`Mark attendance for all students before saving. ${unmarked.length} ${unmarked.length === 1 ? "student is" : "students are"} still unmarked.`, true);
+        return;
+      }
+
+      state.records[dateInput.value] = Object.fromEntries(
+        state.students.map((student) => [student.id, statuses[student.id]])
+      );
+      delete state.drafts[dateInput.value];
+      if (!saveState()) return;
+      render();
+      showMessage("Attendance saved successfully.", false);
+    });
+
+    dateInput.addEventListener("change", () => {
+      showMessage("", false);
+      render();
+    });
+    searchInput.addEventListener("input", render);
+    statusFilter.addEventListener("change", render);
+
+    const openModal = () => {
+      formMessage.textContent = "";
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+      document.getElementById("newStudentName").focus();
+    };
+
+    const closeModal = () => {
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+      studentForm.reset();
+    };
+
+    document.getElementById("addStudentButton").addEventListener("click", openModal);
+    document.getElementById("cancelAddStudent").addEventListener("click", closeModal);
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) closeModal();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && modal.classList.contains("open")) closeModal();
+    });
+
+    studentForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const name = document.getElementById("newStudentName").value.trim();
+      const registration = document.getElementById("newStudentReg").value.trim();
+      if (!name || !registration) {
+        formMessage.textContent = "Enter both a name and a registration number.";
+        return;
+      }
+      if (state.students.some((student) => student.registration.toLowerCase() === registration.toLowerCase())) {
+        formMessage.textContent = "That registration number is already on the roster.";
+        return;
+      }
+
+      state.students.push({
+        id: `stu-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        name,
+        registration
+      });
+      if (!saveState()) {
+        state.students.pop();
+        return;
+      }
+      closeModal();
+      render();
+      showMessage(`${name} was added to the roster.`, false);
+    });
+
+    if (storageWarning) {
+      showMessage("Saved attendance data could not be read. A fresh roster is shown; saving will replace the unreadable data.", true);
+    }
+    render();
+  </script>
+</body>
+</html>
